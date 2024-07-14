@@ -28,10 +28,12 @@ interface MealSelectorProps {
 enum MealCategory {
   Raňajky = 'BREAKFAST',
   Desiata = 'SNACK',
+  Olovrant = 'SNACK',
   Obed = 'LUNCH',
   Večera = 'DINNER',
 
 }
+
 
 export default function CustomizedAccordions({day}: MealSelectorProps) {
     const meals = ['Raňajky', 'Desiata', 'Obed', 'Olovrant', 'Večera']

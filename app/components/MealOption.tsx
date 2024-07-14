@@ -6,6 +6,7 @@ import { Context } from '../context';
 enum MealCategory {
   Raňajky = 'BREAKFAST',
   Desiata = 'SNACK',
+  Olovrant = 'SNACK',
   Obed = 'LUNCH',
   Večera = 'DINNER',
 }
@@ -27,6 +28,7 @@ interface Meal {
   carbs: number;
   fats: number;
   ingredients: Ingredient[];
+  spices: Ingredient[];
 }
 
 interface MealOptionProps {
@@ -40,6 +42,7 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
   const [selectedMeal, setSelectedMeal] = useState<number | null>(0); // Track selected meal index
   const [mealOption, setMealOption] = useState<Meal[]>([]); // State for meals fetched from API
   const [confirmedMeal, setConfirmedMeal] = useState<Meal | null>(null); // Track confirmed meal
+  const [spices, setSpices] = useState<Ingredient[]>([]); // Track spices
   const context = useContext(Context);
 
   if (!context) {
@@ -53,6 +56,11 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
       .then(response => response.json())
       .then(data => {
         // Assuming data is an array of Meal objects
+        data.forEach((meal: Meal) => {
+          meal.spices = meal.ingredients.filter((ingredient: Ingredient) => ingredient.unit === 'spice');
+          meal.ingredients = meal.ingredients.filter((ingredient) => ingredient.unit !== 'spice');
+        })
+        console.log(data);
         setMealOption(data); // Update mealOption state with fetched data
       })
       .catch(error => {
@@ -61,19 +69,44 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
   }, [day, mealCategory]);
 
   const caloriesHandler = () => {
-    if(selectedMeal === null) return;
-
+    if (selectedMeal === null) return;
+  
     const confirmedMeal = mealOption[selectedMeal];
-
-    if(confirmedMeal !== null) {
-      calories.calories += confirmedMeal.calories;
-      calories.proteins += confirmedMeal.proteins;
-      calories.carbs += confirmedMeal.carbs;
-      calories.fats += confirmedMeal.fats;
-      setCalories(calories);
+  
+    if (confirmedMeal !== null) {
+      const updatedCalories = {
+        ...calories,
+        calories: calories.calories + confirmedMeal.calories,
+        proteins: calories.proteins + confirmedMeal.proteins,
+        carbs: calories.carbs + confirmedMeal.carbs,
+        fats: calories.fats + confirmedMeal.fats,
+      };
+  
+      setCalories(updatedCalories); // Assuming setCalories updates the context
     }
-  }
+  };
 
+  const decimalToFraction = (decimal: number): string => {
+    if(decimal.toString().indexOf('.') > -1) {
+    
+    
+    let numerator = decimal * 100;
+      let denominator = 100;
+      
+      // Simplify fraction
+      let gcd = function(a: number, b: number): number {
+          return b ? gcd(b, a % b) : a;
+      };
+      let divisor = gcd(numerator, denominator);
+      
+      numerator /= divisor;
+      denominator /= divisor;
+      
+      return numerator + '/' + denominator;
+    }
+    return decimal.toString();
+  }
+  
   return (
     <div className='m-[1.5rem]'>
 
@@ -112,11 +145,18 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
               <Grid item xs={12} sm={4}>
                 <Typography className='text-m font-semibold'>INGREDIENCIE</Typography>
                 <ul className='list-disc pl-[1rem]'>
-                  {mealOption[selectedMeal].ingredients.map((ingredient, idx) => (
+                  {mealOption[selectedMeal].ingredients.map((ingredient, idx) => {
+                    return (<li key={idx}>
+                      <Typography className='leading-6'>{ingredient.pivot.quantity && decimalToFraction(ingredient.pivot.quantity)} {ingredient.unit && ingredient.unit} {ingredient.title}</Typography>
+                    </li>)
+                  })}
+                  {mealOption[selectedMeal].spices.length > 0 && <Typography className='text-m font-semibold right-[1rem] relative mt-[1rem]'>DOCHUCOVADLÁ</Typography>}
+                  {mealOption[selectedMeal].spices.map((ingredient, idx) => {
+                    return (
                     <li key={idx}>
                       <Typography className='leading-6'>{ingredient.title}</Typography>
-                    </li>
-                  ))}
+                    </li>)
+                  })}
                 </ul>
                 {/* <Typography className='mt-[1rem]'>{mealOptions[selectedMeal].ingredient_recommendation}</Typography> */}
               </Grid>
@@ -125,10 +165,10 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
                 <Typography>{mealOption[selectedMeal].description}</Typography>
                 <Box mt={6}>
                   <Typography className='text-m font-semibold mb-[1rem]'>KALORICKÉ HODNOTY</Typography>
-                  <Typography>Kcal = {mealOption[selectedMeal].calories}</Typography>
-                  <Typography>Proteins = {mealOption[selectedMeal].proteins}</Typography>
-                  <Typography>Carbs = {mealOption[selectedMeal].carbs}</Typography>
-                  <Typography>Fats = {mealOption[selectedMeal].fats}</Typography>
+                  <Typography>Kalórie = {mealOption[selectedMeal].calories}</Typography>
+                  <Typography>Proteíny = {mealOption[selectedMeal].proteins}</Typography>
+                  <Typography>Sacharidy = {mealOption[selectedMeal].carbs}</Typography>
+                  <Typography>Tuky = {mealOption[selectedMeal].fats}</Typography>
                 </Box>
               </Grid>
             </Grid>
