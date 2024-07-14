@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -16,12 +17,11 @@
   }
 }
 
+*{
+  font-family: 'Outfit', sans-serif;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(180deg, #5700FF 0%, #31009C 100%);
 }

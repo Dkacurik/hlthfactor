@@ -13,7 +13,7 @@ export default function Home() {
     <>
       <Header />
       <ContextProvider>
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main className='max-w-screen-xl mx-auto px=[1rem]'>
           <DaySelector activeDay={day} activeDayHandler={setDay}/>
           <MealSelector day={day}/>
           <Summary />
