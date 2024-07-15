@@ -7,9 +7,10 @@ import { Ingredient, Meal, MealCategory } from '../types';
 interface MealOptionProps {
   day: string;
   mealCategory: MealCategory;
+  expanded: string | false;
 }
 
-const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
+const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory, expanded}) => {
   const [selectedMeal, setSelectedMeal] = useState<number | null>(0); // Track selected meal index
   const [mealOption, setMealOption] = useState<Meal[]>([]); // State for meals fetched from API
   const context = useContext(Context);
@@ -29,13 +30,25 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
           meal.spices = meal.ingredients.filter((ingredient: Ingredient) => ingredient.unit === 'spice');
           meal.ingredients = meal.ingredients.filter((ingredient) => ingredient.unit !== 'spice');
         })
-        console.log(data);
-        setMealOption(data); // Update mealOption state with fetched data
+        setMealOption((prev) => {
+          const oldConfirmedMeal = confirmedMeals.meals.find(
+            (meal) => meal.day === day && meal.mealCategory === mealCategory
+          );
+          if (oldConfirmedMeal !== undefined) {
+            setSelectedMeal(data.findIndex((meal: Meal) => meal.title === oldConfirmedMeal.meal.title));
+          }
+          return [...data];
+        }); // Update mealOption state with fetched data
+        
       })
       .catch(error => {
         console.error('Error fetching meals:', error);
       });
   }, [day, mealCategory]);
+
+  // useEffect(() => {
+
+  // }, []);
 
   const caloriesHandler = () => {
     if (selectedMeal === null) return;
@@ -148,13 +161,13 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
               <Grid item xs={12} sm={4}>
                 <Typography className='text-m font-semibold'>INGREDIENCIE</Typography>
                 <ul className='list-disc pl-[1rem]'>
-                  {mealOption[selectedMeal].ingredients.map((ingredient, idx) => {
+                  {mealOption[selectedMeal] && mealOption[selectedMeal].ingredients.map((ingredient, idx) => {
                     return (<li key={idx}>
                       <Typography className='leading-6'>{ingredient.pivot.quantity && decimalToFraction(ingredient.pivot.quantity)} {ingredient.unit && ingredient.unit} {ingredient.title}</Typography>
                     </li>)
                   })}
-                  {mealOption[selectedMeal].spices.length > 0 && <Typography className='text-m font-semibold right-[1rem] relative mt-[1rem]'>DOCHUCOVADLÁ</Typography>}
-                  {mealOption[selectedMeal].spices.map((ingredient, idx) => {
+                  {mealOption[selectedMeal] && mealOption[selectedMeal].spices.length > 0 && <Typography className='text-m font-semibold right-[1rem] relative mt-[1rem]'>DOCHUCOVADLÁ</Typography>}
+                  {mealOption[selectedMeal] && mealOption[selectedMeal].spices.map((ingredient, idx) => {
                     return (
                     <li key={idx}>
                       <Typography className='leading-6'>{ingredient.title}</Typography>

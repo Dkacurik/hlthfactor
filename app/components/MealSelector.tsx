@@ -9,7 +9,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import MealOption from './MealOption';
 import { Context } from '../context';
-import { ConfirmedMeals } from '../types';
+import { ConfirmedMeals, MealCategory } from '../types';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -27,23 +27,15 @@ interface MealSelectorProps {
   day: string
 }
 
-enum MealCategory {
-  Raňajky = 'BREAKFAST',
-  Desiata = 'SNACK',
-  Olovrant = 'SNACK',
-  Obed = 'LUNCH',
-  Večera = 'DINNER',
-
-}
-
-
 export default function CustomizedAccordions({day}: MealSelectorProps) {
-    const meals = ['Raňajky', 'Desiata', 'Obed', 'Olovrant', 'Večera']
+  const meals = ['Raňajky', 'Desiata', 'Obed', 'Olovrant', 'Večera']
   const [expanded, setExpanded] = React.useState<string | false>('');
-  // const {confirmedMeals} = React.useContext(Context);
+  const [confirmed, setConfirmed] = React.useState<string[]>([]);
+
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
+      setConfirmed([])
     };
     const context = React.useContext(Context);
     if (!context) {
@@ -52,16 +44,21 @@ export default function CustomizedAccordions({day}: MealSelectorProps) {
 
     const {confirmedMeals} = context
 
+    React.useEffect(() => {
+      confirmedMeals.meals.forEach((meal) => {
+        setExpanded(`panel-${meal.day}-${meal.mealCategory}`);
+      });
+    }, [confirmedMeals]);
   return (
     <div className='mt-[2.5rem]'>
       
         {meals.map((meal, idx) => (
-            <Accordion expanded={expanded === 'panel' + idx} onChange={handleChange('panel' + idx)} className='bg-transparent border-0' key={idx}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon className={expanded === `panel${idx}` ? 'text-black' : 'text-white'}/>}  aria-controls="panel1d-content" id="panel1d-header" className={expanded === 'panel' + idx ? 'bg-primary text-black rounded-t-3xl' : 'bg-secondary text-white rounded-3xl'}>
+            <Accordion expanded={expanded === `panel-${day}-${meal}`} onChange={handleChange(`panel-${day}-${meal}`)} className='bg-transparent border-0' key={`panel-${day}-${meal}`}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon className={expanded === `panel-${day}-${meal}` ? 'text-black' : 'text-white'}/>}  aria-controls="panel1d-content" id="panel1d-header" className={expanded === `panel-${day}-${meal}` ? 'bg-primary text-black rounded-t-3xl' : confirmed.includes(`panel-${day}-${meal}`) ? 'bg-white text-black' : 'bg-secondary text-white rounded-3xl'}>
               <Typography className='text-[1.250rem]'>{meal}</Typography>
             </AccordionSummary>
-            <AccordionDetails className={expanded === `panel${idx}` ? `bg-white text-black rounded-b-3xl mb-[1rem]`: 'bg-white'}>
-              <MealOption day={day} mealCategory={MealCategory[meal as keyof typeof MealCategory]}/>
+            <AccordionDetails className={expanded === `panel-${day}-${meal}` ? `bg-white text-black rounded-b-3xl mb-[1rem]`: 'bg-white'}>
+              <MealOption day={day} mealCategory={MealCategory[meal as keyof typeof MealCategory]} expanded={expanded}/>
             </AccordionDetails>
           </Accordion>
         ))}
