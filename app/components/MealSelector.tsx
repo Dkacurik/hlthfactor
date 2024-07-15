@@ -8,6 +8,8 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 
 import Typography from '@mui/material/Typography';
 import MealOption from './MealOption';
+import { Context } from '../context';
+import { ConfirmedMeals } from '../types';
 
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -38,11 +40,17 @@ enum MealCategory {
 export default function CustomizedAccordions({day}: MealSelectorProps) {
     const meals = ['Raňajky', 'Desiata', 'Obed', 'Olovrant', 'Večera']
   const [expanded, setExpanded] = React.useState<string | false>('');
-
+  // const {confirmedMeals} = React.useContext(Context);
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
+    const context = React.useContext(Context);
+    if (!context) {
+      throw new Error('MealSelector must be used within a Context.Provider');
+    }
+
+    const {confirmedMeals} = context
 
   return (
     <div className='mt-[2.5rem]'>

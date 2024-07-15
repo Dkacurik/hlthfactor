@@ -2,54 +2,23 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Grid, Paper, Box, Typography, Radio } from '@mui/material';
 import PrimaryButton from './PrimaryButton';
 import { Context } from '../context';
-
-enum MealCategory {
-  Raňajky = 'BREAKFAST',
-  Desiata = 'SNACK',
-  Olovrant = 'SNACK',
-  Obed = 'LUNCH',
-  Večera = 'DINNER',
-}
-
-interface Ingredient {
-  title: string;
-  unit: string;
-  pivot: {
-    quantity: number;
-  };
-}
-
-interface Meal {
-  title: string;
-  description: string;
-  time_of_preparation: string;
-  calories: number;
-  proteins: number;
-  carbs: number;
-  fats: number;
-  ingredients: Ingredient[];
-  spices: Ingredient[];
-}
+import { Ingredient, Meal, MealCategory } from '../types';
 
 interface MealOptionProps {
   day: string;
   mealCategory: MealCategory;
 }
 
-
-
 const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
   const [selectedMeal, setSelectedMeal] = useState<number | null>(0); // Track selected meal index
   const [mealOption, setMealOption] = useState<Meal[]>([]); // State for meals fetched from API
-  const [confirmedMeal, setConfirmedMeal] = useState<Meal | null>(null); // Track confirmed meal
-  const [spices, setSpices] = useState<Ingredient[]>([]); // Track spices
   const context = useContext(Context);
 
   if (!context) {
     throw new Error('MealSelector must be used within a Context.Provider');
   }
 
-  const { calories, setCalories } = context;
+  const { calories, setCalories, confirmedMeals, setConfirmedMeals } = context;
 
   useEffect(() => {
     fetch(`http://localhost:8000/api/meals/${day}/${mealCategory}`)
@@ -72,19 +41,53 @@ const MealOption: React.FC<MealOptionProps> = ({ day, mealCategory}) => {
     if (selectedMeal === null) return;
   
     const confirmedMeal = mealOption[selectedMeal];
+    const oldConfirmedMeal = confirmedMeals.meals.find(
+      (meal) => meal.day === day && meal.mealCategory === mealCategory
+    );
   
-    if (confirmedMeal !== null) {
-      const updatedCalories = {
-        ...calories,
-        calories: calories.calories + confirmedMeal.calories,
-        proteins: calories.proteins + confirmedMeal.proteins,
-        carbs: calories.carbs + confirmedMeal.carbs,
-        fats: calories.fats + confirmedMeal.fats,
+    // Initialize updatedCalories with the current calories
+    let updatedCalories = { ...calories };
+  
+    // Subtract old meal's nutritional values if it exists
+    if (oldConfirmedMeal !== undefined) {
+      updatedCalories = {
+        ...updatedCalories,
+        calories: updatedCalories.calories - oldConfirmedMeal.meal.calories,
+        proteins: updatedCalories.proteins - oldConfirmedMeal.meal.proteins,
+        carbs: updatedCalories.carbs - oldConfirmedMeal.meal.carbs,
+        fats: updatedCalories.fats - oldConfirmedMeal.meal.fats,
       };
   
-      setCalories(updatedCalories); // Assuming setCalories updates the context
+      // Remove the old meal from confirmedMeals
+      setConfirmedMeals((prev) => ({
+        ...prev,
+        meals: prev.meals.filter(
+          (meal) => !(meal.day === day && meal.mealCategory === mealCategory)
+        ),
+      }));
     }
+  
+    // Add new meal's nutritional values if a new meal is selected
+    if (confirmedMeal !== null) {
+      updatedCalories = {
+        ...updatedCalories,
+        calories: updatedCalories.calories + confirmedMeal.calories,
+        proteins: updatedCalories.proteins + confirmedMeal.proteins,
+        carbs: updatedCalories.carbs + confirmedMeal.carbs,
+        fats: updatedCalories.fats + confirmedMeal.fats,
+      };
+  
+      // Add the new meal to confirmedMeals
+      setConfirmedMeals((prev) => ({
+        ...prev,
+        meals: [...prev.meals, { meal: confirmedMeal, day, mealCategory }],
+      }));
+    }
+  
+    // Update calories state
+    setCalories((prev) => ({ ...prev, ...updatedCalories }));
   };
+  
 
   const decimalToFraction = (decimal: number): string => {
     if(decimal.toString().indexOf('.') > -1) {

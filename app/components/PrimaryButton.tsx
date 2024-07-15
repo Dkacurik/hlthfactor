@@ -4,7 +4,7 @@ import { Button } from "@mui/material";
 interface PrimaryButtonProps {
     title: string;
     type: string;
-    handleSave: () => void;
+    handleSave?: () => void;
 }
 
 const PrimaryButton = ({title, type, handleSave}: PrimaryButtonProps) => {

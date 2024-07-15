@@ -6,6 +6,7 @@ import MealSelector from './components/MealSelector';
 import { ContextProvider } from './context';
 import Summary from './components/Summary';
 import ShoppingList from './components/ShoppingList';
+import { ConfirmedMeals } from './types';
 
 export default function Home() {
   const [day, setDay] = useState('1')
