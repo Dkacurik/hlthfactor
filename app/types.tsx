@@ -1,4 +1,5 @@
 export interface Ingredient {
+    id?: number;
     title: string;
     unit: string;
     pivot: {
@@ -42,3 +43,7 @@ export interface MealOptionProps {
     mealCategory: MealCategory;
   }
   
+export interface ShoppingListItems{
+    ingredients: Ingredient[];
+    spices: Ingredient[];
+}
