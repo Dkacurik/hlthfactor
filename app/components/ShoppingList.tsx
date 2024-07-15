@@ -1,55 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
-
-// Mock Context
-const Context = React.createContext({
-  confirmedMeals: {
-    meals: [
-      {
-        meal: {
-          id: 1,
-          name: 'Meal 1',
-          ingredients: [
-            { id: 1, title: 'Ingredient 1', pivot: { quantity: 2 } },
-            { id: 2, title: 'Ingredient 2', pivot: { quantity: 1 } }
-          ],
-          spices: [
-            { id: 3, title: 'Spice 1', pivot: { quantity: 1 } }
-          ]
-        }
-      },
-      {
-        meal: {
-          id: 2,
-          name: 'Meal 2',
-          ingredients: [
-            { id: 1, title: 'Ingredient 1', pivot: { quantity: 1 } },
-            { id: 3, title: 'Ingredient 3', pivot: { quantity: 3 } }
-          ],
-          spices: [
-            { id: 4, title: 'Spice 2', pivot: { quantity: 2 } }
-          ]
-        }
-      }
-    ]
-  }
-});
-
-// Types
-interface Ingredient {
-  id: number;
-  title: string;
-  pivot: {
-    quantity: number;
-  };
-}
-
-interface Meal {
-  id: number;
-  name: string;
-  ingredients: Ingredient[];
-  spices: Ingredient[];
-}
+import { Box, Typography, Paper, Checkbox, List, ListItem, ListItemText, ListItemIcon, Grid } from '@mui/material';
+import { Context } from '../context';
+import { Ingredient, Meal } from '../types';
 
 interface ConfirmedMeal {
   meal: Meal;
@@ -59,10 +11,14 @@ interface ShoppingListItem {
   id: string; // Use string as ID to uniquely identify ingredients and spices
   text: string;
   completed: boolean;
+  quantity: number;
+  unit?: string;
 }
 
 const ShoppingList = () => {
-  const [items, setItems] = useState<ShoppingListItem[]>([]);
+  const [ingredientsList, setIngredientsList] = useState<ShoppingListItem[]>([]);
+  const [spices, setSpicesList] = useState<ShoppingListItem[]>([]);
+
   const context = React.useContext(Context);
 
   if (!context) {
@@ -74,8 +30,8 @@ const ShoppingList = () => {
   useEffect(() => {
     const countIngredientsAndSpices = (meals: ConfirmedMeal[]): { ingredients: ShoppingListItem[]; spices: ShoppingListItem[] } => {
       const countedItems = {
-        ingredients: [],
-        spices: [],
+        ingredients: [] as ShoppingListItem[],
+        spices: [] as ShoppingListItem[],
       };
 
       meals.forEach((confirmedMeal) => {
@@ -85,9 +41,9 @@ const ShoppingList = () => {
           const ingredientKey = `${id}-${title}`; // Unique key based on id and title
           const existingIndex = countedItems.ingredients.findIndex(item => item.id === ingredientKey);
           if (existingIndex !== -1) {
-            countedItems.ingredients[existingIndex].text = `${title} (${countedItems.ingredients[existingIndex].quantity + pivot.quantity})`;
+            countedItems.ingredients[existingIndex].text = `${countedItems.ingredients[existingIndex].quantity + pivot.quantity} ${countedItems.ingredients[existingIndex].unit} - ${title}`;
           } else {
-            countedItems.ingredients.push({ id: ingredientKey, text: title, completed: false, quantity: pivot.quantity });
+            countedItems.ingredients.push({ id: ingredientKey, text: `${pivot.quantity} ${ingredient.unit} - ${title}`, completed: false, quantity: pivot.quantity, unit: ingredient.unit });
           }
         });
 
@@ -113,11 +69,14 @@ const ShoppingList = () => {
     console.log('Counted Spices:', countedItems.spices);
 
     // Format items for shopping list
-    const shoppingListItems: ShoppingListItem[] = [
-      ...countedItems.ingredients.map(item => ({ ...item, text: `${item.text} (${item.quantity})` })),
-      ...countedItems.spices.map(item => ({ ...item, text: `${item.text} (${item.quantity})` }))
+    const ingredientsListItems: ShoppingListItem[] = [
+      ...countedItems.ingredients.map(item => ({ ...item, text: `${item.text}` })),
     ];
-    setItems(shoppingListItems);
+    const spicesListItems: ShoppingListItem[] = [
+      ...countedItems.spices.map(item => ({ ...item, text: `${item.text}` }))
+    ];
+    setIngredientsList(ingredientsListItems);
+    setSpicesList(spicesListItems);
 
     // Normally, you would return cleanup logic if necessary
     return () => {
@@ -126,7 +85,9 @@ const ShoppingList = () => {
   }, [confirmedMeals]);
 
   const handleToggle = (id: string) => () => {
-    setItems(items.map(item => (item.id === id ? { ...item, completed: !item.completed } : item)));
+    setIngredientsList(ingredientsList.map(item => (item.id === id ? { ...item, completed: !item.completed } : item)));
+    setSpicesList(spices.map(item => (item.id === id ? { ...item, completed: !item.completed } : item)));
+
   };
 
   return (
@@ -136,36 +97,84 @@ const ShoppingList = () => {
           Váš nákupný zoznam
         </Typography>
         <Paper sx={{ padding: '16px', borderRadius: '3xl' }}>
+        {ingredientsList.length > 0 ? (
+          <>
+          <Typography className='text-m font-semibold'>INGREDIENCIE</Typography>
           <List>
-            {items.map(item => (
-              <ListItem key={item.id} disablePadding className='shadow-sm'>
-                <ListItemIcon>
-                  <Checkbox
-                    edge="start"
-                    checked={item.completed}
-                    tabIndex={-1}
-                    disableRipple
-                    onChange={handleToggle(item.id)}
-                    sx={{
-                      color: '#6200ea',
-                      '&.Mui-checked': {
+            <Grid container spacing={2}>
+            {ingredientsList.map(item => (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <ListItem disablePadding className='shadow-sm'>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={item.completed}
+                      tabIndex={-1}
+                      disableRipple
+                      onChange={handleToggle(item.id)}
+                      sx={{
                         color: '#6200ea',
-                      },
+                        '&.Mui-checked': {
+                          color: '#6200ea',
+                        },
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    onClick={handleToggle(item.id)}
+                    sx={{
+                      textDecoration: item.completed ? 'line-through' : 'none',
+                      color: item.completed ? 'rgba(0, 0, 0, 0.54)' : 'rgba(0, 0, 0, 0.87)',
                     }}
+                    className='text-md cursor-pointer'
                   />
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  onClick={handleToggle(item.id)}
-                  sx={{
-                    textDecoration: item.completed ? 'line-through' : 'none',
-                    color: item.completed ? 'rgba(0, 0, 0, 0.54)' : 'rgba(0, 0, 0, 0.87)',
-                  }}
-                  className='text-md cursor-pointer'
-                />
-              </ListItem>
+                </ListItem>
+              </Grid>
             ))}
+          </Grid>
           </List>
+          {spices.length > 0 && (
+            <>
+            <Typography className='text-m font-semibold mt-5'>DOCHUCOVADLÁ</Typography>
+            <List>
+            <Grid container spacing={2}>
+            {spices.map(item => (
+              <Grid item xs={12} sm={6} md={4} key={item.id}>
+                <ListItem disablePadding className='shadow-sm'>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={item.completed}
+                      tabIndex={-1}
+                      disableRipple
+                      onChange={handleToggle(item.id)}
+                      sx={{
+                        color: '#6200ea',
+                        '&.Mui-checked': {
+                          color: '#6200ea',
+                        },
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    onClick={handleToggle(item.id)}
+                    sx={{
+                      textDecoration: item.completed ? 'line-through' : 'none',
+                      color: item.completed ? 'rgba(0, 0, 0, 0.54)' : 'rgba(0, 0, 0, 0.87)',
+                    }}
+                    className='text-md cursor-pointer'
+                  />
+                </ListItem>
+              </Grid>
+            ))}
+          </Grid>
+            </List>
+            </>
+          )}
+          </>): <Typography className='text-m'>Nemáte žiadne položky v nákupnom zozname</Typography>}
+        
         </Paper>
       </Box>
     </div>

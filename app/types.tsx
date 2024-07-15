@@ -1,5 +1,5 @@
 export interface Ingredient {
-    id?: number;
+    id: number;
     title: string;
     unit: string;
     pivot: {
@@ -41,7 +41,11 @@ export enum MealCategory {
 export interface MealOptionProps {
     day: string;
     mealCategory: MealCategory;
-  }
+}
+
+export interface ShoppingListItem {
+
+}
   
 export interface ShoppingListItems{
     ingredients: Ingredient[];
