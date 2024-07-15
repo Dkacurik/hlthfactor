@@ -52,7 +52,6 @@ export default function CustomizedAccordions({day}: MealSelectorProps) {
     }, [confirmedMeals]);
   return (
     <div className='mt-[2.5rem]'>
-        <h1>{confirmed}</h1>
         {meals.map((meal, idx) => (
             <Accordion expanded={expanded === `panel-${day}-${meal}`} onChange={handleChange(`panel-${day}-${meal}`)} className='bg-transparent border-0' key={`panel-${day}-${meal}`}>
             <AccordionSummary expandIcon={<ExpandMoreIcon className={expanded === `panel-${day}-${meal}` ? 'text-black' : 'text-white'}/>}  aria-controls="panel1d-content" id="panel1d-header" className={expanded === `panel-${day}-${meal}` ? 'bg-primary text-black rounded-t-3xl' : confirmed.some((panel) => panel === `panel-${day}-${meal}`) ? 'bg-white text-black' : 'bg-secondary text-white rounded-3xl'}>
