@@ -1,22 +1,29 @@
 export interface Ingredient {
-    id: number;
-    title: string;
-    unit: string;
-    pivot: {
-      quantity: number;
-    };
-  }
+  id: number;
+  title: string;
+  unit: string;
+  pivot: {
+    quantity: number;
+    category: string | null;
+  };
+}
+
+export interface GroupedIngredients {
+  [category: string]: Ingredient[];
+}
 
 export interface Meal {
-    title: string;
-    description: string;
-    time_of_preparation: string;
-    calories: number;
-    proteins: number;
-    carbs: number;
-    fats: number;
-    ingredients: Ingredient[];
-    spices: Ingredient[];
+  title: string;
+  description: string;
+  time_of_preparation: string;
+  calories: number;
+  proteins: number;
+  carbs: number;
+  fats: number;
+  ingredients: Ingredient[];
+  spices: Ingredient[];
+  groupedIngredients?: GroupedIngredients;
+  groupedSpices?: GroupedIngredients;
 }
 
 export interface ConfirmedMeal {
