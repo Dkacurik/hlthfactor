@@ -118,9 +118,7 @@ const ShoppingList = () => {
             (item) => item.id === spiceKey
           )
           if (existingIndex !== -1) {
-            countedItems.spices[existingIndex].text = `${title} (${
-              countedItems.spices[existingIndex].quantity + pivot.quantity
-            })`
+            countedItems.spices[existingIndex].text = `${title}`
           } else {
             countedItems.spices.push({
               id: spiceKey,
