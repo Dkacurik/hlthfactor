@@ -264,7 +264,7 @@ const ShoppingList = () => {
               </List>
               {spices.length > 0 && (
                 <>
-                  <Typography className="text-m font-semibold mt-5">
+                  <Typography className="text-m font-semibold mt-[1rem]">
                     DOCHUCOVADLÁ
                   </Typography>
                   <List>
