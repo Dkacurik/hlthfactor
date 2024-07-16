@@ -169,8 +169,6 @@ const ShoppingList = () => {
   }
 
   const downloadPDF = () => {
-    console.log(ingredientsList, spices)
-
     // Define the URL and the data to be sent
     const url = 'https://hlth.rsekonomik.sk/api/createpdf'
     const filteredIngredients = ingredientsList.filter(
