@@ -31,7 +31,6 @@ export default function CustomizedAccordions({ day }: MealSelectorProps) {
   const meals = ['Raňajky', 'Desiata', 'Obed', 'Olovrant', 'Večera']
   const [expanded, setExpanded] = React.useState<string | false>('')
   const [confirmed, setConfirmed] = React.useState<string[]>([])
-  const [confirmedClasses, setConfirmedClasses] = React.useState<string>('')
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -71,11 +70,6 @@ export default function CustomizedAccordions({ day }: MealSelectorProps) {
           expanded as keyof typeof MealCategory
         )}`
       )
-      console.log(
-        `panel-${meal.day}-${getNextMealCategoryKey(
-          expanded as keyof typeof MealCategory
-        )}`
-      )
       setConfirmed((prev) => [
         ...prev,
         `panel-${meal.day}-${meal.mealCategory}`,
@@ -84,7 +78,6 @@ export default function CustomizedAccordions({ day }: MealSelectorProps) {
   }, [confirmedMeals])
   return (
     <div className="mt-[2.5rem]">
-      <h1>{confirmed}</h1>
       {meals.map((meal, idx) => (
         <Accordion
           expanded={expanded === `panel-${day}-${meal}`}
@@ -114,7 +107,7 @@ export default function CustomizedAccordions({ day }: MealSelectorProps) {
                         MealCategory[meal as keyof typeof MealCategory]
                       }`
                   )
-                ? 'bg-white text-black'
+                ? 'accordeon-used rounded-3xl'
                 : 'bg-secondary text-white rounded-3xl'
             }
           >
