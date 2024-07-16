@@ -63,7 +63,6 @@ const ShoppingList = () => {
     const fraction = hasDecimal
       ? decimalToFraction(parseFloat(`0.${quantity.split('.')[1]}`))
       : ''
-    console.log
     const unit = splitText[1]
     const ingredient = splitText.slice(2).join(' ')
     return `${
@@ -137,8 +136,6 @@ const ShoppingList = () => {
 
     const { meals } = confirmedMeals
     const countedItems = countIngredientsAndSpices(meals)
-    console.log('Counted Ingredients:', countedItems.ingredients)
-    console.log('Counted Spices:', countedItems.spices)
 
     // Format items for shopping list
     const ingredientsListItems: ShoppingListItem[] = [

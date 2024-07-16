@@ -7,9 +7,14 @@ import { Context } from '../context'
 interface DaySelectorProps {
   activeDay: string
   activeDayHandler: (day: string) => void
+  selectorRef: React.RefObject<HTMLDivElement>
 }
 
-const DaySelector = ({ activeDay, activeDayHandler }: DaySelectorProps) => {
+const DaySelector = ({
+  activeDay,
+  activeDayHandler,
+  selectorRef,
+}: DaySelectorProps) => {
   const [confirmed, setConfirmed] = React.useState<string[]>([])
 
   const days = ['1', '2', '3', '4', '5']
@@ -32,7 +37,7 @@ const DaySelector = ({ activeDay, activeDayHandler }: DaySelectorProps) => {
       activeDayHandler(day)
     }
   return (
-    <div>
+    <div ref={selectorRef}>
       <h2 className="mt-[2.5rem] text-l">Naplánujte si jednotlivé dni</h2>
       <Stack
         direction={{ sm: 'row', xs: 'column' }}
