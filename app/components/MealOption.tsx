@@ -111,7 +111,7 @@ const MealOption: React.FC<MealOptionProps> = ({
     if (expanded && isConfirmed) {
       setSelectedMeal(isConfirmed)
     }
-  }, [expanded])
+  }, [expanded, mealCategory])
 
   const caloriesHandler = (remove = false) => {
     if (selectedMeal === null) return
@@ -191,7 +191,6 @@ const MealOption: React.FC<MealOptionProps> = ({
 
   return (
     <div className="m-[1.5rem]">
-      <h1>{mealCategory}</h1>
       <Box>
         <Grid container spacing={2}>
           {mealOption.map((meal: Meal, index) => (
@@ -323,7 +322,12 @@ const MealOption: React.FC<MealOptionProps> = ({
             </Grid>
           </Box>
         )}
-        {selectedMeal && isConfirmed === selectedMeal ? (
+        <h1>Selected Meal: {selectedMeal}</h1>
+        <h1>isConfirmed: {isConfirmed}</h1>
+        <h1>Porovnanie: {selectedMeal === isConfirmed ? 'true' : 'false'}</h1>
+        {isConfirmed !== null &&
+        selectedMeal !== null &&
+        isConfirmed === selectedMeal ? (
           <Box mt={4} textAlign="center">
             <PrimaryButton
               type="md"
