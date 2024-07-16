@@ -91,6 +91,14 @@ export default function CustomizedAccordions({ day }: MealSelectorProps) {
                 className={
                   expanded === `panel-${day}-${meal}`
                     ? 'text-black'
+                    : confirmed.some(
+                        (panel) =>
+                          panel ===
+                          `panel-${day}-${
+                            MealCategory[meal as keyof typeof MealCategory]
+                          }`
+                      )
+                    ? 'accordeon-used'
                     : 'text-white'
                 }
               />

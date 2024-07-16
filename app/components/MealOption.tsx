@@ -294,19 +294,14 @@ const MealOption: React.FC<MealOptionProps> = ({
             </Grid>
           </Box>
         )}
-        {selectedMeal === null ? (
-          <Box mt={4} textAlign="center">
-            <PrimaryButton
-              type="md"
-              title="Potvrdiť"
-              handleSave={caloriesHandler}
-            />
-          </Box>
-        ) : (
-          <Box mt={4} textAlign="center">
-            <PrimaryButton type="md" title="Odstrániť" />
-          </Box>
-        )}
+
+        <Box mt={4} textAlign="center">
+          <PrimaryButton
+            type="md"
+            title="Potvrdiť"
+            handleSave={caloriesHandler}
+          />
+        </Box>
       </Box>
     </div>
   )
