@@ -37,6 +37,7 @@ export default function CustomizedAccordions({
   const meals = ['Raňajky', 'Desiata', 'Obed', 'Olovrant', 'Večera']
   const [expanded, setExpanded] = React.useState<string | false>('')
   const [confirmed, setConfirmed] = React.useState<string[]>([])
+  const [blockExpanse, setBlockExpanse] = React.useState<boolean>(false)
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -73,17 +74,19 @@ export default function CustomizedAccordions({
   const { confirmedMeals } = context
 
   React.useEffect(() => {
-    confirmedMeals.meals.forEach((meal) => {
-      setExpanded(
-        `panel-${meal.day}-${getNextMealCategoryKey(
-          expanded as keyof typeof MealCategory
-        )}`
-      )
-      setConfirmed((prev) => [
-        ...prev,
-        `panel-${meal.day}-${meal.mealCategory}`,
-      ])
+    let tmp: string[] = []
+    confirmedMeals.meals.forEach((meal, idx) => {
+      if (confirmedMeals.meals.length - 1 === idx && !blockExpanse) {
+        setExpanded(
+          `panel-${meal.day}-${getNextMealCategoryKey(
+            expanded as keyof typeof MealCategory
+          )}`
+        )
+      }
+      tmp.push(`panel-${meal.day}-${meal.mealCategory}`)
     })
+    setBlockExpanse(false)
+    setConfirmed(tmp)
   }, [confirmedMeals])
   return (
     <div className="mt-[2.5rem]">
@@ -141,6 +144,7 @@ export default function CustomizedAccordions({
               day={day}
               mealCategory={MealCategory[meal as keyof typeof MealCategory]}
               expanded={expanded}
+              handleBlockExpanse={setBlockExpanse}
             />
           </AccordionDetails>
         </Accordion>

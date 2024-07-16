@@ -8,12 +8,14 @@ interface MealOptionProps {
   day: string
   mealCategory: MealCategory
   expanded: string | false
+  handleBlockExpanse: (block: boolean) => void
 }
 
 const MealOption: React.FC<MealOptionProps> = ({
   day,
   mealCategory,
   expanded,
+  handleBlockExpanse,
 }) => {
   const [selectedMeal, setSelectedMeal] = useState<number | null>(null) // Track selected meal index
   const [mealOption, setMealOption] = useState<Meal[]>([])
@@ -100,14 +102,23 @@ const MealOption: React.FC<MealOptionProps> = ({
   useEffect(() => {
     if (expanded === false && !isConfirmed) {
       setSelectedMeal(null)
+    } else if (expanded && isConfirmed) {
+      setSelectedMeal(isConfirmed)
     }
   }, [mealCategory])
+
+  useEffect(() => {
+    if (expanded && isConfirmed) {
+      setSelectedMeal(isConfirmed)
+    }
+  }, [expanded])
 
   const caloriesHandler = (remove = false) => {
     if (selectedMeal === null) return
 
     const confirmedMeal = !remove ? mealOption[selectedMeal] : null
-    console.log(confirmedMeal)
+    confirmedMeal === null && handleBlockExpanse(true)
+
     const oldConfirmedMeal = confirmedMeals.meals.find(
       (meal) => meal.day === day && meal.mealCategory === mealCategory
     )
@@ -180,6 +191,7 @@ const MealOption: React.FC<MealOptionProps> = ({
 
   return (
     <div className="m-[1.5rem]">
+      <h1>{mealCategory}</h1>
       <Box>
         <Grid container spacing={2}>
           {mealOption.map((meal: Meal, index) => (
@@ -311,11 +323,12 @@ const MealOption: React.FC<MealOptionProps> = ({
             </Grid>
           </Box>
         )}
-        {isConfirmed === selectedMeal ? (
+        {selectedMeal && isConfirmed === selectedMeal ? (
           <Box mt={4} textAlign="center">
             <PrimaryButton
               type="md"
               title="Odstrániť"
+              color="secondary"
               handleSave={() => {
                 caloriesHandler(true)
               }}
@@ -324,6 +337,7 @@ const MealOption: React.FC<MealOptionProps> = ({
         ) : (
           <Box mt={4} textAlign="center">
             <PrimaryButton
+              disabled={selectedMeal === null}
               type="md"
               title="Potvrdiť"
               handleSave={() => {
