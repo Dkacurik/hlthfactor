@@ -17,7 +17,7 @@ const MealOption: React.FC<MealOptionProps> = ({
 }) => {
   const [selectedMeal, setSelectedMeal] = useState<number | null>(null) // Track selected meal index
   const [mealOption, setMealOption] = useState<Meal[]>([])
-  const [isConfirmed, setIsConfirmed] = useState<boolean>(false)
+  const [isConfirmed, setIsConfirmed] = useState<number | null>(null)
   const context = useContext(Context)
 
   if (!context) {
@@ -83,7 +83,11 @@ const MealOption: React.FC<MealOptionProps> = ({
                 (meal: Meal) => meal.title === oldConfirmedMeal.meal.title
               )
             )
-            setIsConfirmed(true)
+            setIsConfirmed(
+              data.findIndex(
+                (meal: Meal) => meal.title === oldConfirmedMeal.meal.title
+              )
+            )
           }
           return [...data]
         }) // Update mealOption state with fetched data
@@ -145,9 +149,9 @@ const MealOption: React.FC<MealOptionProps> = ({
         ...prev,
         meals: [...prev.meals, { meal: confirmedMeal, day, mealCategory }],
       }))
-      setIsConfirmed(true)
+      setIsConfirmed(selectedMeal)
     } else {
-      setIsConfirmed(false)
+      setIsConfirmed(null)
       setSelectedMeal(null)
     }
 
@@ -307,7 +311,7 @@ const MealOption: React.FC<MealOptionProps> = ({
             </Grid>
           </Box>
         )}
-        {isConfirmed ? (
+        {isConfirmed === selectedMeal ? (
           <Box mt={4} textAlign="center">
             <PrimaryButton
               type="md"

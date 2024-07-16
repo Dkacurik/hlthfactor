@@ -218,7 +218,7 @@ const ShoppingList = () => {
         >
           Váš nákupný zoznam
         </Typography>
-        <Paper sx={{ padding: '16px', borderRadius: '3xl' }}>
+        <Paper sx={{ padding: '16px' }} className="rounded-3xl">
           {ingredientsList.length > 0 ? (
             <>
               <Typography className="text-m font-semibold">
