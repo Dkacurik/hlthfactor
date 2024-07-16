@@ -83,6 +83,7 @@ const MealOption: React.FC<MealOptionProps> = ({
                 (meal: Meal) => meal.title === oldConfirmedMeal.meal.title
               )
             )
+            setIsConfirmed(true)
           }
           return [...data]
         }) // Update mealOption state with fetched data
