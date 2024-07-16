@@ -54,7 +54,6 @@ export default function CustomizedAccordions({
       .toString()
       .split('-')[2] as keyof typeof MealCategory
     const currentIndex = categories.indexOf(tmp)
-    console.log('tmp', tmp)
 
     if (currentIndex === -1 || currentIndex === categories.length - 1) {
       // Return null if the current category is not found or it is the last category
