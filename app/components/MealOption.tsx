@@ -26,6 +26,9 @@ const MealOption: React.FC<MealOptionProps> = ({
   const { calories, setCalories, confirmedMeals, setConfirmedMeals } = context
 
   useEffect(() => {
+    if (mealCategory === MealCategory.Olovrant) {
+      mealCategory = MealCategory.Desiata
+    }
     fetch(`https://hlth.rsekonomik.sk/api/meals/${day}/${mealCategory}`)
       .then((response) => response.json())
       .then((data) => {
