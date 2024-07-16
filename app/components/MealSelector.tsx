@@ -116,7 +116,7 @@ export default function CustomizedAccordions({
             id="panel1d-header"
             className={
               expanded === `panel-${day}-${meal}`
-                ? 'bg-primary text-black rounded-t-3xl'
+                ? 'bg-primary text-black rounded-t-3xl mt-[1rem]'
                 : confirmed.some(
                     (panel) =>
                       panel ===

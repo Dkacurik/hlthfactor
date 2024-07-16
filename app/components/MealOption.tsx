@@ -15,7 +15,7 @@ const MealOption: React.FC<MealOptionProps> = ({
   mealCategory,
   expanded,
 }) => {
-  const [selectedMeal, setSelectedMeal] = useState<number | null>(0) // Track selected meal index
+  const [selectedMeal, setSelectedMeal] = useState<number | null>(null) // Track selected meal index
   const [mealOption, setMealOption] = useState<Meal[]>([]) // State for meals fetched from API
   const context = useContext(Context)
 
@@ -90,6 +90,12 @@ const MealOption: React.FC<MealOptionProps> = ({
         console.error('Error fetching meals:', error)
       })
   }, [day, mealCategory])
+
+  useEffect(() => {
+    if (expanded === false) {
+      setSelectedMeal(null)
+    }
+  }, [expanded])
 
   const caloriesHandler = () => {
     if (selectedMeal === null) return
@@ -210,7 +216,7 @@ const MealOption: React.FC<MealOptionProps> = ({
           <Box mt={4}>
             <Grid container spacing={6}>
               <Grid item xs={12} sm={4}>
-                <ul className="list-disc pl-[1rem]">
+                <ul className="list-disc pl-[1rem] pb-3">
                   {mealOption[selectedMeal] &&
                     mealOption[selectedMeal].groupedIngredients &&
                     Object.keys(
@@ -218,14 +224,14 @@ const MealOption: React.FC<MealOptionProps> = ({
                     ).map((category, idx) => (
                       <React.Fragment key={idx}>
                         {category && category.length > 0 && (
-                          <Typography className="text-m font-semibold right-[1rem] relative mt-[1rem]">
+                          <Typography className="text-[18px] font-semibold right-[1rem] relative text-secondary mt-[1rem] pb-[0.5rem]">
                             {category.toLocaleUpperCase()}
                           </Typography>
                         )}
 
                         {/* Render ingredients */}
                         {mealOption[selectedMeal].groupedIngredients && (
-                          <Typography className="text-s font-semibold right-[1rem] relative mt-[1rem]">
+                          <Typography className="text-s font-semibold right-[1rem] pb-[0.5rem] relative">
                             INGREDIENCIE
                           </Typography>
                         )}
@@ -248,7 +254,7 @@ const MealOption: React.FC<MealOptionProps> = ({
                         {mealOption[selectedMeal].groupedSpices &&
                           mealOption[selectedMeal].groupedSpices[category]
                             ?.length > 0 && (
-                            <Typography className="text-s font-semibold right-[1rem] relative mt-[1rem]">
+                            <Typography className="text-s font-semibold right-[1rem] pb-[0.5rem] relative mt-[1rem]">
                               DOCHUCOVADLÁ
                             </Typography>
                           )}

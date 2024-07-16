@@ -12,6 +12,7 @@ import {
 } from '@mui/material'
 import { Context } from '../context'
 import { Ingredient, Meal } from '../types'
+import PrimaryButton from './PrimaryButton'
 
 interface ConfirmedMeal {
   meal: Meal
@@ -169,6 +170,42 @@ const ShoppingList = () => {
     )
   }
 
+  const downloadPDF = () => {
+    console.log(ingredientsList, spices)
+
+    // Define the URL and the data to be sent
+    const url = 'https://hlth.rsekonomik.sk/api/createpdf'
+    const filteredIngredients = ingredientsList.filter(
+      (ingredient) => !ingredient.completed
+    )
+    const filteredSpices = spices.filter((spice) => !spice.completed)
+    const data = {
+      ingredients: filteredIngredients,
+      spices: filteredSpices,
+    }
+
+    // Create the POST request using fetch
+    fetch(url, {
+      method: 'POST', // Specify the request method
+      headers: {
+        'Content-Type': 'application/json', // Set the content type to JSON
+      },
+      body: JSON.stringify(data), // Convert the data to a JSON string
+    })
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create a blob URL representing the PDF data
+        const url = URL.createObjectURL(blob)
+
+        // Open the PDF in a new tab or window
+        window.open(url)
+
+        // Optionally, release the object URL after some time
+        setTimeout(() => URL.revokeObjectURL(url), 1000)
+      })
+      .catch((error) => console.error('Error fetching PDF:', error))
+  }
+
   return (
     <div className="w-100">
       <Box sx={{ width: '100%' }}>
@@ -279,6 +316,13 @@ const ShoppingList = () => {
             </Typography>
           )}
         </Paper>
+      </Box>
+      <Box my={4} textAlign="center">
+        <PrimaryButton
+          type="lg"
+          title="ULOŽIŤ A STIAHNUŤ NÁKUPNÝ ZOZNAM "
+          handleSave={downloadPDF}
+        />
       </Box>
     </div>
   )
