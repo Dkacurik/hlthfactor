@@ -16,7 +16,8 @@ const MealOption: React.FC<MealOptionProps> = ({
   expanded,
 }) => {
   const [selectedMeal, setSelectedMeal] = useState<number | null>(null) // Track selected meal index
-  const [mealOption, setMealOption] = useState<Meal[]>([]) // State for meals fetched from API
+  const [mealOption, setMealOption] = useState<Meal[]>([])
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false)
   const context = useContext(Context)
 
   if (!context) {
@@ -92,15 +93,16 @@ const MealOption: React.FC<MealOptionProps> = ({
   }, [day, mealCategory])
 
   useEffect(() => {
-    if (expanded === false) {
+    if (expanded === false && !isConfirmed) {
       setSelectedMeal(null)
     }
-  }, [expanded])
+  }, [mealCategory])
 
-  const caloriesHandler = () => {
+  const caloriesHandler = (remove = false) => {
     if (selectedMeal === null) return
 
-    const confirmedMeal = mealOption[selectedMeal]
+    const confirmedMeal = !remove ? mealOption[selectedMeal] : null
+    console.log(confirmedMeal)
     const oldConfirmedMeal = confirmedMeals.meals.find(
       (meal) => meal.day === day && meal.mealCategory === mealCategory
     )
@@ -142,6 +144,10 @@ const MealOption: React.FC<MealOptionProps> = ({
         ...prev,
         meals: [...prev.meals, { meal: confirmedMeal, day, mealCategory }],
       }))
+      setIsConfirmed(true)
+    } else {
+      setIsConfirmed(false)
+      setSelectedMeal(null)
     }
 
     // Update calories state
@@ -300,14 +306,27 @@ const MealOption: React.FC<MealOptionProps> = ({
             </Grid>
           </Box>
         )}
-
-        <Box mt={4} textAlign="center">
-          <PrimaryButton
-            type="md"
-            title="Potvrdiť"
-            handleSave={caloriesHandler}
-          />
-        </Box>
+        {isConfirmed ? (
+          <Box mt={4} textAlign="center">
+            <PrimaryButton
+              type="md"
+              title="Odstrániť"
+              handleSave={() => {
+                caloriesHandler(true)
+              }}
+            />
+          </Box>
+        ) : (
+          <Box mt={4} textAlign="center">
+            <PrimaryButton
+              type="md"
+              title="Potvrdiť"
+              handleSave={() => {
+                caloriesHandler(false)
+              }}
+            />
+          </Box>
+        )}
       </Box>
     </div>
   )
