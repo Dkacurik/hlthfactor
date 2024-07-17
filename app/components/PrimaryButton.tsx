@@ -18,7 +18,6 @@ const PrimaryButton = ({
   textColor,
   disabled,
 }: PrimaryButtonProps) => {
-  console.log('PrimaryButton', `hover:bg-hover${color}`)
   const styles: { [key: string]: string } = {
     primary:
       'bg-primary text-black hover:bg-hoverprimary text-m font-semibold rounded-full',
