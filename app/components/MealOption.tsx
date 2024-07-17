@@ -59,6 +59,10 @@ const MealOption: React.FC<MealOptionProps> = ({
               {}
             )
 
+          if (!groupedIngredients['']) {
+            groupedIngredients[''] = []
+          }
+
           // Group spices by category
           const groupedSpices: GroupedIngredients = meal.spices.reduce(
             (acc: GroupedIngredients, spice: Ingredient) => {
@@ -195,7 +199,7 @@ const MealOption: React.FC<MealOptionProps> = ({
       <Box>
         <Grid container spacing={2}>
           {mealOption.map((meal: Meal, index) => (
-            <Grid item xs={12} sm={4} key={meal.title}>
+            <Grid item xs={12} md={4} key={meal.title}>
               <Paper
                 sx={{
                   p: 2,
@@ -252,12 +256,16 @@ const MealOption: React.FC<MealOptionProps> = ({
                           </Typography>
                         )}
 
-                        {/* Render ingredients */}
-                        {mealOption[selectedMeal].groupedIngredients && (
-                          <Typography className="text-s font-semibold right-[1rem] pb-[0.5rem] relative">
-                            INGREDIENCIE
-                          </Typography>
-                        )}
+                        {mealOption[selectedMeal].groupedIngredients &&
+                          Object.values(
+                            mealOption[selectedMeal].groupedIngredients[
+                              category
+                            ]
+                          ).flat().length > 0 && (
+                            <Typography className="text-s font-semibold right-[1rem] pb-[0.5rem] relative">
+                              INGREDIENCIE
+                            </Typography>
+                          )}
                         {mealOption[selectedMeal].groupedIngredients &&
                           mealOption[selectedMeal].groupedIngredients[
                             category
@@ -274,6 +282,14 @@ const MealOption: React.FC<MealOptionProps> = ({
                             </li>
                           ))}
                         {/* Render spices */}
+                        {mealOption[selectedMeal].groupedIngredients &&
+                          Object.values(
+                            mealOption[selectedMeal].groupedIngredients[
+                              category
+                            ]
+                          ).flat().length == 0 && (
+                            <hr className="mt-[1rem] w-[150px] relative left-[-1rem] text-secondary border-[2px]" />
+                          )}
                         {mealOption[selectedMeal].groupedSpices &&
                           mealOption[selectedMeal].groupedSpices[category]
                             ?.length > 0 && (
