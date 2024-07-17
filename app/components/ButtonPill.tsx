@@ -16,7 +16,7 @@ const ButtonPill = ({
     <Button
       onClick={onClick}
       className={
-        'px-[2rem] py-[1rem] text-m font-semibold rounded-full hover:bg-primary hover:text-black' +
+        'px-[2rem] py-[1rem] text-m font-semibold rounded-full hover:bg-primary hover:text-black min-w-[120px]' +
         (state === 'active'
           ? ' bg-primary text-black'
           : state === 'used'

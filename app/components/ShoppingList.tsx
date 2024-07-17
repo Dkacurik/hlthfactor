@@ -212,6 +212,7 @@ const ShoppingList = () => {
             marginBottom: '16px',
             marginTop: '2.5rem',
             fontSize: '1.5rem',
+            fontWeight: '400',
           }}
         >
           Váš nákupný zoznam

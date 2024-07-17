@@ -40,9 +40,9 @@ const DaySelector = ({
     <div ref={selectorRef}>
       <h2 className="mt-[2.5rem] text-l">Naplánujte si jednotlivé dni</h2>
       <Stack
-        direction={{ sm: 'row', xs: 'column' }}
+        direction={{ sm: 'row', xs: 'row' }}
         spacing={2}
-        className="mt-[1.5rem]"
+        className="mt-[1.5rem] overflow-x-scroll no-scrollbar"
       >
         {days.map((day) => (
           <ButtonPill
