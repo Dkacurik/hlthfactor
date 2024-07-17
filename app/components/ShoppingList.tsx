@@ -38,44 +38,16 @@ const ShoppingList = () => {
 
   const { confirmedMeals } = context
 
-  const decimalToFraction = (decimal: number): string => {
-    if (decimal.toString().indexOf('.') > -1) {
-      let numerator = decimal * 100
-      let denominator = 100
-
-      // Simplify fraction
-      let gcd = function (a: number, b: number): number {
-        return b ? gcd(b, a % b) : a
-      }
-      let divisor = gcd(numerator, denominator)
-
-      numerator /= divisor
-      denominator /= divisor
-
-      return numerator + '/' + denominator
-    }
-    return decimal.toString()
-  }
-
   const formatOutput = (text: string): string => {
+    if (text.includes('pl') || text.includes('čl')) {
+      const tmp = text.split('-')
+      return `1 ks - ${tmp[1]}`
+    }
     const splitText = text.split(' ')
     const quantity = splitText[0]
-    const hasDecimal = quantity.includes('.')
-    const fraction = hasDecimal
-      ? decimalToFraction(parseFloat(`0.${quantity.split('.')[1]}`))
-      : ''
-    const unit = splitText[1]
-    const ingredient = splitText.slice(2).join(' ')
-    return `${
-      parseInt(quantity.split('.')[0]) > 0 ? `${quantity.split('.')[0]}` : ''
-    }
-    ${
-      fraction !== ''
-        ? parseInt(quantity.split('.')[0]) > 0
-          ? ` a ${fraction}`
-          : `${fraction}`
-        : ''
-    } ${unit} ${ingredient}`
+    let hasDecimal = quantity.includes('.')
+    const ceil = Math.ceil(parseFloat(quantity))
+    return `${ceil} ${splitText.slice(1).join(' ')}`
   }
 
   useEffect(() => {
@@ -200,6 +172,30 @@ const ShoppingList = () => {
         setTimeout(() => URL.revokeObjectURL(url), 1000)
       })
       .catch((error) => console.error('Error fetching PDF:', error))
+    const storeURL = 'https://hlth.rsekonomik.sk/api/confirmed-meals'
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
+    const body = {
+      confirmed_meals: confirmedMeals,
+      token: token,
+    }
+    if (!token) {
+      console.log('Token not found')
+      return
+    }
+    fetch(storeURL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    }).then((response) => {
+      if (response.status == 200) {
+        console.log('saved')
+      } else {
+        console.log('error')
+      }
+    })
   }
 
   return (

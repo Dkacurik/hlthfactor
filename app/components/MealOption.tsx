@@ -30,10 +30,11 @@ const MealOption: React.FC<MealOptionProps> = ({
   const { calories, setCalories, confirmedMeals, setConfirmedMeals } = context
 
   useEffect(() => {
-    if (mealCategory === MealCategory.Olovrant) {
-      mealCategory = MealCategory.Desiata
-    }
-    fetch(`https://hlth.rsekonomik.sk/api/meals/${day}/${mealCategory}`)
+    fetch(
+      `https://hlth.rsekonomik.sk/api/meals/${day}/${
+        mealCategory === MealCategory.Olovrant ? 'SNACK' : mealCategory
+      }`
+    )
       .then((response) => response.json())
       .then((data) => {
         // Assuming data is an array of Meal objects
@@ -284,6 +285,7 @@ const MealOption: React.FC<MealOptionProps> = ({
                         {/* Render spices */}
                         {mealOption[selectedMeal].groupedIngredients &&
                           mealOption[selectedMeal].groupedSpices &&
+                          mealOption[selectedMeal].groupedSpices[category] &&
                           Object.values(
                             mealOption[selectedMeal].groupedIngredients[
                               category
