@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <header className="flex flex-col items-center mt-[5rem] px-[1rem]">
       <Image src="/logo.svg" width={362} height={114} alt="HLTH Factor logo" />
-      <h1 className="mt-[2.5rem] text-xl text-center">
+      <h1 className="mt-[2.5rem] md:text-xl text-l text-center">
         ZMENA ZAČÍNA{' '}
         <span className="text-primary font-semibold">PRVÝM SÚSTOM</span>
       </h1>

@@ -216,7 +216,14 @@ const ShoppingList = () => {
         >
           Váš nákupný zoznam
         </Typography>
-        <Paper sx={{ padding: '16px' }} className="rounded-3xl">
+        <Typography className="mb-[1rem] text-m">
+          Ak nejaký produkt kúpiť nepotrebujete, jednoducho ho zaškrtnine a v
+          nákupnom zozname sa neobjaví.
+        </Typography>
+        <Paper
+          sx={{ padding: '16px' }}
+          className="rounded-3xl scroll-smooth max-h-[400px] overflow-y-auto"
+        >
           {ingredientsList.length > 0 ? (
             <>
               <Typography className="text-m font-semibold">
@@ -316,6 +323,8 @@ const ShoppingList = () => {
       <Box my={4} textAlign="center">
         <PrimaryButton
           type="lg"
+          color="primary"
+          textColor="black"
           title="ULOŽIŤ A STIAHNUŤ NÁKUPNÝ ZOZNAM "
           handleSave={downloadPDF}
         />

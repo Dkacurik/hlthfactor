@@ -6,9 +6,6 @@ import MealSelector from './components/MealSelector'
 import { Context, ContextProvider } from './context'
 import Summary from './components/Summary'
 import ShoppingList from './components/ShoppingList'
-import { ConfirmedMeals } from './types'
-import { Box } from '@mui/material'
-import PrimaryButton from './components/PrimaryButton'
 
 export default function Home() {
   const [day, setDay] = useState('1')

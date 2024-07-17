@@ -126,8 +126,8 @@ export default function CustomizedAccordions({
                         MealCategory[meal as keyof typeof MealCategory]
                       }`
                   )
-                ? 'accordeon-used rounded-3xl'
-                : 'bg-secondary text-white rounded-3xl'
+                ? 'accordeon-used rounded-3xl mb-[0.5rem] drop-shadow-xl'
+                : 'bg-secondary text-white rounded-3xl mb-[0.5rem] drop-shadow-xl'
             }
           >
             <Typography className="text-[1.250rem]">{meal}</Typography>

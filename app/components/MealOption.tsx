@@ -3,6 +3,7 @@ import { Grid, Paper, Box, Typography, Radio } from '@mui/material'
 import PrimaryButton from './PrimaryButton'
 import { Context } from '../context'
 import { GroupedIngredients, Ingredient, Meal, MealCategory } from '../types'
+import { Button } from '@mui/material'
 
 interface MealOptionProps {
   day: string
@@ -329,8 +330,9 @@ const MealOption: React.FC<MealOptionProps> = ({
           <Box mt={4} textAlign="center">
             <PrimaryButton
               type="md"
-              title="Odstrániť"
-              color="secondary"
+              title="Vymazať"
+              color="danger"
+              textColor="white"
               handleSave={() => {
                 caloriesHandler(true)
               }}
@@ -342,6 +344,8 @@ const MealOption: React.FC<MealOptionProps> = ({
               disabled={selectedMeal === null}
               type="md"
               title="Potvrdiť"
+              color="primary"
+              textColor="black"
               handleSave={() => {
                 caloriesHandler(false)
               }}
