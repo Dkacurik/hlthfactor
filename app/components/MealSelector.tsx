@@ -5,7 +5,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-
 import Typography from '@mui/material/Typography'
 import MealOption from './MealOption'
 import { Context } from '../context'
@@ -38,6 +37,8 @@ export default function CustomizedAccordions({
   const [expanded, setExpanded] = React.useState<string | false>('')
   const [confirmed, setConfirmed] = React.useState<string[]>([])
   const [blockExpanse, setBlockExpanse] = React.useState<boolean>(false)
+
+  const summaryRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -87,6 +88,18 @@ export default function CustomizedAccordions({
     setBlockExpanse(false)
     setConfirmed(tmp)
   }, [confirmedMeals])
+
+  React.useEffect(() => {
+    if (expanded) {
+      const summaryRef = summaryRefs.current[expanded]
+      if (summaryRef) {
+        setTimeout(() => {
+          summaryRef.scrollIntoView({ behavior: 'smooth' })
+        }, 450) // Adjust the timeout as needed to ensure the panel has fully expanded
+      }
+    }
+  }, [expanded])
+
   return (
     <div className="mt-[2.5rem]">
       {meals.map((meal, idx) => (
@@ -116,6 +129,9 @@ export default function CustomizedAccordions({
             }
             aria-controls="panel1d-content"
             id="panel1d-header"
+            ref={(el) => {
+              summaryRefs.current[`panel-${day}-${meal}`] = el
+            }}
             className={
               expanded === `panel-${day}-${meal}`
                 ? 'bg-primary text-black rounded-t-3xl mt-[1rem]'

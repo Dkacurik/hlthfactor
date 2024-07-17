@@ -283,11 +283,15 @@ const MealOption: React.FC<MealOptionProps> = ({
                           ))}
                         {/* Render spices */}
                         {mealOption[selectedMeal].groupedIngredients &&
+                          mealOption[selectedMeal].groupedSpices &&
                           Object.values(
                             mealOption[selectedMeal].groupedIngredients[
                               category
                             ]
-                          ).flat().length == 0 && (
+                          ).flat().length == 0 &&
+                          Object.values(
+                            mealOption[selectedMeal].groupedSpices[category]
+                          ).flat().length > 0 && (
                             <hr className="mt-[1rem] w-[150px] relative left-[-1rem] text-secondary border-[2px]" />
                           )}
                         {mealOption[selectedMeal].groupedSpices &&
