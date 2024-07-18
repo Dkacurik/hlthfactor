@@ -42,10 +42,16 @@ export const ContextProvider: React.FC<ProviderProps> = ({ children }) => {
 
   useEffect(() => {
     async function tmp() {
-      setTimeout(async () => {
-        const savedMeals = await getSavedMeals('sdgfaljdfhlkjashdflkjhasdfjkha')
-        setConfirmedMeals(savedMeals)
-      }, 2000)
+      const savedMeals = await getSavedMeals('sdgfaljdfhlkjashdflkjhasdfjkha')
+      setConfirmedMeals(savedMeals)
+      savedMeals.meals.forEach((meal) => {
+        setCalories((prev) => ({
+          calories: prev.calories + meal.meal.calories,
+          proteins: prev.proteins + meal.meal.proteins,
+          carbs: prev.carbs + meal.meal.carbs,
+          fats: prev.fats + meal.meal.fats,
+        }))
+      })
     }
     tmp()
   }, []) // Empty dependency
