@@ -32,7 +32,6 @@ const DaySelector = ({
     })
   }, [confirmedMeals])
 
-  // Scroll to the active day's ButtonPill element
   useEffect(() => {
     if (stackRef.current) {
       const buttonPill = stackRef.current.querySelector(`.btn-${activeDay}`)

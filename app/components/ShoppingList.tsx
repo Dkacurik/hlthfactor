@@ -11,19 +11,13 @@ import {
   Grid,
 } from '@mui/material'
 import { Context } from '../context'
-import { Ingredient, Meal } from '../types'
+import { Ingredient, Meal, ShoppingListItem } from '../types'
 import PrimaryButton from './PrimaryButton'
+import { formatOutput } from '../utils/utils'
+import { downloadPDF, storeConfirmedMeals } from '../api'
 
 interface ConfirmedMeal {
   meal: Meal
-}
-
-interface ShoppingListItem {
-  id: string // Use string as ID to uniquely identify ingredients and spices
-  text: string
-  completed: boolean
-  quantity: number
-  unit?: string
 }
 
 const ShoppingList = () => {
@@ -37,18 +31,6 @@ const ShoppingList = () => {
   }
 
   const { confirmedMeals } = context
-
-  const formatOutput = (text: string): string => {
-    if (text.includes('pl') || text.includes('čl')) {
-      const tmp = text.split('-')
-      return `1 ks - ${tmp[1]}`
-    }
-    const splitText = text.split(' ')
-    const quantity = splitText[0]
-    let hasDecimal = quantity.includes('.')
-    const ceil = Math.ceil(parseFloat(quantity))
-    return `${ceil} ${splitText.slice(1).join(' ')}`
-  }
 
   useEffect(() => {
     const countIngredientsAndSpices = (
@@ -140,62 +122,9 @@ const ShoppingList = () => {
     )
   }
 
-  const downloadPDF = () => {
-    // Define the URL and the data to be sent
-    const url = 'https://hlth.rsekonomik.sk/api/createpdf'
-    const filteredIngredients = ingredientsList.filter(
-      (ingredient) => !ingredient.completed
-    )
-    const filteredSpices = spices.filter((spice) => !spice.completed)
-    const data = {
-      ingredients: filteredIngredients,
-      spices: filteredSpices,
-    }
-
-    // Create the POST request using fetch
-    fetch(url, {
-      method: 'POST', // Specify the request method
-      headers: {
-        'Content-Type': 'application/json', // Set the content type to JSON
-      },
-      body: JSON.stringify(data), // Convert the data to a JSON string
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        // Create a blob URL representing the PDF data
-        const url = URL.createObjectURL(blob)
-
-        // Open the PDF in a new tab or window
-        window.open(url)
-
-        // Optionally, release the object URL after some time
-        setTimeout(() => URL.revokeObjectURL(url), 1000)
-      })
-      .catch((error) => console.error('Error fetching PDF:', error))
-    const storeURL = 'https://hlth.rsekonomik.sk/api/confirmed-meals'
-    const urlParams = new URLSearchParams(window.location.search)
-    const token = urlParams.get('token')
-    const body = {
-      confirmed_meals: confirmedMeals,
-      token: token,
-    }
-    if (!token) {
-      console.log('Token not found')
-      return
-    }
-    fetch(storeURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    }).then((response) => {
-      if (response.status == 200) {
-        console.log('saved')
-      } else {
-        console.log('error')
-      }
-    })
+  const downloadAndStorePDF = async () => {
+    await downloadPDF(ingredientsList, spices)
+    await storeConfirmedMeals(confirmedMeals)
   }
 
   return (
@@ -323,7 +252,7 @@ const ShoppingList = () => {
           color="primary"
           textColor="black"
           title="ULOŽIŤ A STIAHNUŤ NÁKUPNÝ ZOZNAM "
-          handleSave={downloadPDF}
+          handleSave={downloadAndStorePDF}
         />
       </Box>
     </div>

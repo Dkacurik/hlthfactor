@@ -3,7 +3,7 @@ import { Grid, Paper, Box, Typography, Radio } from '@mui/material'
 import PrimaryButton from './PrimaryButton'
 import { Context } from '../context'
 import { GroupedIngredients, Ingredient, Meal, MealCategory } from '../types'
-import { Button } from '@mui/material'
+import { decimalToFraction } from '../utils/utils'
 
 interface MealOptionProps {
   day: string
@@ -37,7 +37,6 @@ const MealOption: React.FC<MealOptionProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        // Assuming data is an array of Meal objects
         data.forEach((meal: Meal) => {
           meal.spices = meal.ingredients.filter(
             (ingredient: Ingredient) => ingredient.unit === 'spice'
@@ -86,32 +85,30 @@ const MealOption: React.FC<MealOptionProps> = ({
             (meal) => meal.day === day && meal.mealCategory === mealCategory
           )
           if (oldConfirmedMeal !== undefined) {
-            setSelectedMeal(
+            if (
               data.findIndex(
-                (meal: Meal) => meal.title === oldConfirmedMeal.meal.title
+                (meal: Meal) => meal.id === oldConfirmedMeal.meal.id
+              ) !== -1
+            ) {
+              setSelectedMeal(
+                data.findIndex(
+                  (meal: Meal) => meal.id === oldConfirmedMeal.meal.id
+                )
               )
-            )
-            setIsConfirmed(
-              data.findIndex(
-                (meal: Meal) => meal.title === oldConfirmedMeal.meal.title
+              setIsConfirmed(
+                data.findIndex(
+                  (meal: Meal) => meal.id === oldConfirmedMeal.meal.id
+                )
               )
-            )
+            }
           }
           return [...data]
-        }) // Update mealOption state with fetched data
+        })
       })
       .catch((error) => {
         console.error('Error fetching meals:', error)
       })
-  }, [day, mealCategory])
-
-  useEffect(() => {
-    if (expanded === false && !isConfirmed) {
-      setSelectedMeal(null)
-    } else if (expanded && isConfirmed) {
-      setSelectedMeal(isConfirmed)
-    }
-  }, [mealCategory])
+  }, [day])
 
   useEffect(() => {
     if (expanded && isConfirmed) {
@@ -164,7 +161,15 @@ const MealOption: React.FC<MealOptionProps> = ({
       // Add the new meal to confirmedMeals
       setConfirmedMeals((prev) => ({
         ...prev,
-        meals: [...prev.meals, { meal: confirmedMeal, day, mealCategory }],
+        meals: [
+          ...prev.meals,
+          {
+            meal: confirmedMeal,
+            day,
+            mealCategory:
+              mealCategory === MealCategory.Olovrant ? 'BRUNCH' : mealCategory,
+          },
+        ],
       }))
       setIsConfirmed(selectedMeal)
     } else {
@@ -174,25 +179,6 @@ const MealOption: React.FC<MealOptionProps> = ({
 
     // Update calories state
     setCalories((prev) => ({ ...prev, ...updatedCalories }))
-  }
-
-  const decimalToFraction = (decimal: number): string => {
-    if (decimal.toString().indexOf('.') > -1) {
-      let numerator = decimal * 100
-      let denominator = 100
-
-      // Simplify fraction
-      let gcd = function (a: number, b: number): number {
-        return b ? gcd(b, a % b) : a
-      }
-      let divisor = gcd(numerator, denominator)
-
-      numerator /= divisor
-      denominator /= divisor
-
-      return numerator + '/' + denominator
-    }
-    return decimal.toString()
   }
 
   return (

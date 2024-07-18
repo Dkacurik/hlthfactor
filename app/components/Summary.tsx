@@ -5,7 +5,12 @@ import { Grid } from '@mui/material'
 const Summary = () => {
   const context = React.useContext(Context)
 
-  const { calories } = context || {}
+  if (!context) {
+    throw new Error('useClient must be used within a ClientProvider')
+  }
+
+  const { calories } = context
+
   return (
     <div className="mt-[2.5rem]">
       <h3 className="text-[1.5rem]">Vaše kalorické hodnoty</h3>

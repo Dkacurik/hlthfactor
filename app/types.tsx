@@ -13,6 +13,7 @@ export interface GroupedIngredients {
 }
 
 export interface Meal {
+  id: number
   title: string
   description: string
   time_of_preparation: string
@@ -24,6 +25,7 @@ export interface Meal {
   spices: Ingredient[]
   groupedIngredients?: GroupedIngredients
   groupedSpices?: GroupedIngredients
+  category: string
 }
 
 export interface ConfirmedMeal {
@@ -40,7 +42,7 @@ export enum MealCategory {
   Raňajky = 'BREAKFAST',
   Desiata = 'SNACK',
   Obed = 'LUNCH',
-  Olovrant = 'SNACK2',
+  Olovrant = 'BRUNCH',
   Večera = 'DINNER',
 }
 
@@ -49,7 +51,13 @@ export interface MealOptionProps {
   mealCategory: MealCategory
 }
 
-export interface ShoppingListItem {}
+export interface ShoppingListItem {
+  id: string // Use string as ID to uniquely identify ingredients and spices
+  text: string
+  completed: boolean
+  quantity: number
+  unit?: string
+}
 
 export interface ShoppingListItems {
   ingredients: Ingredient[]
