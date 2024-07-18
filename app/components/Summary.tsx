@@ -15,7 +15,7 @@ const Summary = () => {
     <div className="mt-[2.5rem]">
       <h3 className="text-[1.5rem]">Vaše kalorické hodnoty</h3>
       <div className="bg-white w-100 px-[3rem] rounded-full mt-[1rem]">
-        <Grid container spacing={0}>
+        <Grid container spacing={0} className="justify-center content-center">
           <Grid item sm={6} md={3}>
             <p className="text-black text-m py-[1rem] px-[1rem]">
               Kalórie: {calories && calories.calories.toFixed(2)}
