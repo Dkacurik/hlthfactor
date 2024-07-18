@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext, use, useEffect } from 'react'
+import React, { useState, useRef, useContext, useEffect } from 'react'
 import Summary from './Summary'
 import ShoppingList from './ShoppingList'
 import Header from './Header'
@@ -22,7 +22,7 @@ const Application = () => {
     setTimeout(() => {
       setDay('1')
     }, 500)
-  })
+  }, [isLoad])
 
   return (
     <>
