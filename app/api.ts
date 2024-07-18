@@ -70,8 +70,7 @@ const storeConfirmedMeals = async (confirmedMeals: ConfirmedMeals) => {
           const data = await response.json();
           return JSON.parse(data.confirmed_meals) as ConfirmedMeals;
       } catch (error) {
-          console.error('Error fetching saved meals:', error);
-          return { meals: [] } as ConfirmedMeals;
+          throw new Error('Error fetching saved meals');
       }
   }
 
