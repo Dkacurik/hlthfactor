@@ -31,7 +31,7 @@ const MealOption: React.FC<MealOptionProps> = ({
 
   useEffect(() => {
     fetch(
-      `https://hlth.rsekonomik.sk/api/meals/${day}/${
+      `https://api.hlthfactor.com/api/meals/${day}/${
         mealCategory === MealCategory.Olovrant ? 'SNACK' : mealCategory
       }`
     )

@@ -1,7 +1,7 @@
 import { ConfirmedMeals, ShoppingListItem } from "./types";
 
 const downloadPDF = async (ingredientsList: ShoppingListItem[], spices: ShoppingListItem[]) => {
-    const url = 'https://hlth.rsekonomik.sk/api/createpdf';
+    const url = 'https://api.hlthfactor.com/api/createpdf';
     const filteredIngredients = ingredientsList.filter((ingredient) => !ingredient.completed);
     const filteredSpices = spices.filter((spice) => !spice.completed);
     const data = {
@@ -32,7 +32,7 @@ const downloadPDF = async (ingredientsList: ShoppingListItem[], spices: Shopping
   };
   
 const storeConfirmedMeals = async (confirmedMeals: ConfirmedMeals) => {
-    const storeURL = 'https://hlth.rsekonomik.sk/api/confirmed-meals';
+    const storeURL = 'https://api.hlthfactor.com/api/confirmed-meals';
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const body = {
@@ -66,7 +66,7 @@ const storeConfirmedMeals = async (confirmedMeals: ConfirmedMeals) => {
 
   const getSavedMeals = async (token: string): Promise<ConfirmedMeals> => {
       try {
-          const response = await fetch(`https://hlth.rsekonomik.sk/api/confirmed-meals/${token}`);
+          const response = await fetch(`https://api.hlthfactor.com/api/confirmed-meals/${token}`);
           const data = await response.json();
           return JSON.parse(data.confirmed_meals) as ConfirmedMeals;
       } catch (error) {
